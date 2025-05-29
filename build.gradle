@@ -6,8 +6,8 @@ plugins {
     id "com.gradle.plugin-publish" version "1.3.1"
 }
 
-group = 'dev.vfyjxf.gradle'
-version = '1.1.1'
+group = 'dev.forgestove.gradle'
+version = '1.0'
 
 repositories {
     mavenCentral()
@@ -20,41 +20,45 @@ configurations {
     shade
     implementation.extendsFrom(shade)
 }
-
+java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 dependencies {
     compileOnly gradleApi()
     shade "org.apache.commons:commons-lang3:3.8.1"
     shade "net.neoforged.jst:jst-cli-bundle:1.0.72"
-    shade("net.neoforged:accesstransformers:11.0.2") {
+    shade("net.neoforged:accesstransformers:10.0.6") {
         exclude group: 'org.slf4j', module: 'slf4j-api'
     }
     compileOnly('org.slf4j:slf4j-api:2.0.9')
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }
-
+tasks.withType(Javadoc).configureEach {
+    options.encoding = 'UTF-8'
+    options.charSet = 'UTF-8'
+    options.addStringOption('Xdoclint:none', '-quiet')
+}
 test {
     useJUnitPlatform()
 }
 shadowJar {
     archiveClassifier.set('')
     configurations = [project.configurations.shade]
-    relocate 'net.neoforged.jst', 'dev.vfyjxf.gradle.accessor.relocate.jst'
-    relocate 'net.neoforged.accesstransformers', 'dev.vfyjxf.gradle.accessor.relocate.accesstransformers'
-    relocate 'org.objectweb.asm', 'dev.vfyjxf.gradle.accessor.relocate.asm'
-    relocate 'org.apache.commons.lang3', 'dev.vfyjxf.gradle.accessor.relocate.commons.lang3'
+    relocate 'net.neoforged.jst', 'dev.forgestove.gradle.accessor.relocate.jst'
+    relocate 'net.neoforged.accesstransformers', 'dev.forgestove.gradle.accessor.relocate.accesstransformers'
+    relocate 'org.objectweb.asm', 'dev.forgestove.gradle.accessor.relocate.asm'
+    relocate 'org.apache.commons.lang3', 'dev.forgestove.gradle.accessor.relocate.commons.lang3'
 }
 
 gradlePlugin {
-    website = 'https://github.com/vfyjxf/ModAccessor'
-    vcsUrl = 'https://github.com/vfyjxf/ModAccessor'
+    website = 'https://github.com/forgestove/ModAccessor'
+    vcsUrl = 'https://github.com/forgestove/ModAccessor'
     plugins {
         mod_accessor {
             displayName = 'ModAccessor'
             description = "A simple gradle plugin to solve the problem of accessing private fields and methods during compile time."
-            id = 'dev.vfyjxf.modaccessor'
+            id = 'dev.forgestove.modaccessor'
             tags.addAll('neoforge', 'minecraft', 'java')
-            implementationClass = 'dev.vfyjxf.gradle.accessor.ModAccessorPlugin'
+            implementationClass = 'dev.forgestove.gradle.accessor.ModAccessorPlugin'
         }
     }
 }
@@ -65,7 +69,7 @@ publishing {
     }
     publications {
         mavenJava(MavenPublication) {
-            from components.java
+//            from components.java
             artifact shadowJar
             groupId = project.group
             artifactId = project.name
