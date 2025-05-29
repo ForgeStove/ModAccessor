@@ -22,8 +22,7 @@ public class ModAccessorPlugin implements Plugin<Project> {
 						  .attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.JAR_TYPE);
 			}
 		);
-		var baseConfigs = new String[]{"compileOnly", "implementation", "api"};
-		for (var base : baseConfigs) {
+		for (var base : new String[]{"compileOnly", "implementation", "api"}) {
 			var config = project.getConfigurations().findByName(base);
 			if (config != null) extension.createTransformConfiguration(config);
 		}
