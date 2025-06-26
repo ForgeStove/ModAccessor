@@ -6,7 +6,7 @@ plugins {
     id "com.gradle.plugin-publish" version "1.3.1"
 }
 base.archivesName = 'ModAccessor'
-group = 'dev.forgestove.gradle'
+group = 'io.github.forgestove'
 version = '1.0.0'
 repositories {
     mavenCentral()
@@ -38,10 +38,10 @@ tasks.withType(Javadoc).configureEach {
 shadowJar {
     archiveClassifier.set('')
     configurations = [project.configurations.shade]
-    relocate 'net.neoforged.jst', 'dev.forgestove.gradle.accessor.relocate.jst'
-    relocate 'net.neoforged.accesstransformers', 'dev.forgestove.gradle.accessor.relocate.accesstransformers'
-    relocate 'org.objectweb.asm', 'dev.forgestove.gradle.accessor.relocate.asm'
-    relocate 'org.apache.commons.lang3', 'dev.forgestove.gradle.accessor.relocate.commons.lang3'
+    relocate 'net.neoforged.jst', 'io.github.forgestove.accessor.relocate.jst'
+    relocate 'net.neoforged.accesstransformers', 'io.github.forgestove.accessor.relocate.accesstransformers'
+    relocate 'org.objectweb.asm', 'io.github.forgestove.accessor.relocate.asm'
+    relocate 'org.apache.commons.lang3', 'io.github.forgestove.accessor.relocate.commons.lang3'
 }
 
 gradlePlugin {
@@ -51,9 +51,9 @@ gradlePlugin {
         mod_accessor {
             displayName = 'ModAccessor'
             description = "A simple gradle plugin to solve the problem of accessing private fields and methods during compile time."
-            id = 'dev.forgestove.modaccessor'
+            id = 'io.github.forgestove.modaccessor'
             tags.addAll('neoforge', 'minecraft', 'java')
-            implementationClass = 'dev.forgestove.gradle.accessor.ModAccessorPlugin'
+            implementationClass = 'io.github.forgestove.accessor.ModAccessorPlugin'
         }
     }
 }
@@ -64,6 +64,12 @@ publishing {
             groupId = project.group
             artifactId = project.name
             version = project.version
+        }
+    }
+    repositories {
+        maven {
+            name = "localMavenRepo"
+            url = uri("${layout.buildDirectory.get().asFile}/repo")
         }
     }
 }

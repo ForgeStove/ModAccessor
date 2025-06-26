@@ -1,4 +1,4 @@
-package dev.forgestove.gradle.accessor;
+package io.github.forgestove.accessor;
 import net.neoforged.accesstransformer.api.AccessTransformerEngine;
 import org.gradle.api.artifacts.transform.*;
 import org.gradle.api.file.*;
