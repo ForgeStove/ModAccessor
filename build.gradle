@@ -5,18 +5,15 @@ plugins {
     id 'com.gradleup.shadow' version '8.3.6'
     id "com.gradle.plugin-publish" version "1.3.1"
 }
-
-base.archivesName = 'modaccessor'
+base.archivesName = 'ModAccessor'
 group = 'dev.forgestove.gradle'
-version = '1.0'
-
+version = '1.0.0'
 repositories {
     mavenCentral()
     mavenLocal()
     gradlePluginPortal()
     maven { url = 'https://maven.neoforged.net/releases' }
 }
-
 configurations {
     shade
     implementation.extendsFrom(shade)
@@ -38,9 +35,6 @@ tasks.withType(Javadoc).configureEach {
     options.charSet = 'UTF-8'
     options.addStringOption('Xdoclint:none', '-quiet')
 }
-test {
-    useJUnitPlatform()
-}
 shadowJar {
     archiveClassifier.set('')
     configurations = [project.configurations.shade]
@@ -60,6 +54,17 @@ gradlePlugin {
             id = 'dev.forgestove.modaccessor'
             tags.addAll('neoforge', 'minecraft', 'java')
             implementationClass = 'dev.forgestove.gradle.accessor.ModAccessorPlugin'
+        }
+    }
+}
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact shadowJar
+            groupId = project.group
+            artifactId = project.name
+            version = project.version
         }
     }
 }

@@ -4,7 +4,7 @@ import org.gradle.api.artifacts.transform.*;
 import org.gradle.api.file.*;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.*;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.*;
 import org.objectweb.asm.*;
 import org.objectweb.asm.tree.ClassNode;
 
@@ -21,6 +21,7 @@ public abstract class AccessTransform implements TransformAction<AccessTransform
 	 * {@link  org.gradle.api.internal.file.archive.ZipCopyAction#CONSTANT_TIME_FOR_ZIP_ENTRIES}
 	 */
 	private static final long CONSTANT_TIME_FOR_ZIP_ENTRIES = new GregorianCalendar(1980, Calendar.FEBRUARY, 1, 0, 0, 0).getTimeInMillis();
+	@Contract(pure = true)
 	@Inject
 	public AccessTransform() {}
 	@Override
