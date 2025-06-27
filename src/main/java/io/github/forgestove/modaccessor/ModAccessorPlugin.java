@@ -1,4 +1,4 @@
-package io.github.forgestove.accessor;
+package io.github.forgestove.modaccessor;
 import org.gradle.api.*;
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition;
 import org.jetbrains.annotations.NotNull;

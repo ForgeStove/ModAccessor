@@ -1,4 +1,4 @@
-package io.github.forgestove.accessor;
+package io.github.forgestove.modaccessor;
 import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.*;
 import org.gradle.api.artifacts.*;
