@@ -30,7 +30,7 @@ pluginManagement {
     }
     resolutionStrategy.eachPlugin {
         if (requested.id.id == "io.github.forgestove.modaccessor") {
-            useModule('com.github.ForgeStove.ModAccessor:build:+')
+            useModule("com.github.ForgeStove.ModAccessor:build:+")
         }
     }
 }
@@ -60,7 +60,7 @@ pluginManagement {
 	}
 	resolutionStrategy.eachPlugin {
 		if (requested.id.id == "io.github.forgestove.modaccessor") {
-			useModule('com.github.ForgeStove.ModAccessor:build:+')
+			useModule("com.github.ForgeStove.ModAccessor:build:+")
 		}
 	}
 }
