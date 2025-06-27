@@ -66,10 +66,4 @@ publishing {
             version = project.version
         }
     }
-    repositories {
-        maven {
-            name = "localMavenRepo"
-            url = uri("${layout.buildDirectory.get().asFile}/repo")
-        }
-    }
 }
