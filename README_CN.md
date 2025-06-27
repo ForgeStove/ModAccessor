@@ -8,27 +8,34 @@
 
 ## Usage
 
-[![ModAccessor](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/dev/vfyjxf/modaccessor/dev.vfyjxf.modaccessor.gradle.plugin/maven-metadata.xml.svg?label=ModAccessor)](https://plugins.gradle.org/plugin/dev.vfyjxf.modaccessor)
+[//]: # ([![ModAccessor]&#40;https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/dev/vfyjxf/modaccessor/dev.vfyjxf.modaccessor.gradle.plugin/maven-metadata.xml.svg?label=ModAccessor&#41;]&#40;https://plugins.gradle.org/plugin/dev.vfyjxf.modaccessor&#41;)
+
+### Groovy DSL
 
 ```groovy
-
-plugins{
-    id("dev.vfyjxf.modaccessor") version "1.1"
+buildscript {
+    repositories { maven { url 'https://jitpack.io' } }
+    dependencies { classpath 'com.github.ForgeStove.ModAccessor:build:1.0.0' }
 }
-modAccessor {
-    createTransformConfiguration(configurations.compileOnly)
-    accessTransformerFiles = project.files('src/main/resources/META-INF/accesstransformer.cfg')
-}
-
+apply plugin: 'io.github.forgestove.modaccessor'
 dependencies {
-    accessCompileOnly(("com.simibubi.create:create-${minecraft_version}:6.0.4-61:slim"))
+    accessCompileOnly("com.simibubi.create:create-1.21.1:6.0.4-61:slim")
 }
 ```
 
+### Kotlin DSL
+
+```kotlin
+buildscript {
+	repositories { maven("https://jitpack.io") }
+	dependencies { classpath("com.github.ForgeStove.ModAccessor:build:1.0.0") }
+}
+apply(plugin = "io.github.forgestove.modaccessor")
+dependencies {
+	add("accessCompileOnly", "com.simibubi.create:create-1.21.1:6.0.4-61:slim")
+}
+```
+
+### Notice
+
 accessConfiguration不是transitive的，所以你需要手动添加依赖。
-
-## Credit
-
-[fabric loom](https://github.com/FabricMC/fabric-loom) : 提供了LocalMaven的解决方案，并且源码转换基于loom的设计
-
-[moddev gradle](https://github.com/NeoForged/ModDevGradle) : 提供了最初版本的解决思路，帮我搞清楚了Artifact Transform如何工作
