@@ -52,7 +52,7 @@ gradlePlugin {
             displayName = 'ModAccessor'
             description = "A simple gradle plugin to solve the problem of accessing private fields and methods during compile time."
             id = 'io.github.forgestove.modaccessor'
-            tags.addAll('neoforge', 'minecraft', 'java')
+            tags.addAll('neoforge', 'forge', 'minecraft', 'java')
             implementationClass = 'io.github.forgestove.accessor.ModAccessorPlugin'
         }
     }
