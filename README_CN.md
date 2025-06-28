@@ -1,5 +1,7 @@
 # ModAccessor
 
+**语言选择**: [English](README.md) | [中文](README_CN.md)
+
 > **本项目复刻自 [vfyjxf/ModAccessor](https://github.com/vfyjxf/ModAccessor)**
 
 一个简单的Gradle Plugin,用于解决编译期无法访问私有类型/字段/方法的问题。

@@ -1,5 +1,7 @@
 # ModAccessor
 
+**Languages**: [English](README.md) | [中文](README_CN.md)
+
 > **This project is forked from [vfyjxf/ModAccessor](https://github.com/vfyjxf/ModAccessor)**
 
 A simple gradle plugin to solve the problem of accessing private fields and methods during compile time.
