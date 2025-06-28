@@ -12,7 +12,7 @@
 
 ```groovy
 plugins {
-    id("io.github.forgestove.modaccessor")
+    id("io.github.forgestove.modaccessor") version "+"
 }
 dependencies {
     accessCompileOnly("com.simibubi.create:create-1.21.1:6.0.4-61:slim")
@@ -24,14 +24,11 @@ dependencies {
 ```groovy
 pluginManagement {
     repositories {
-        mavenLocal()
-        gradlePluginPortal()
         maven { url 'https://jitpack.io' }
     }
     resolutionStrategy.eachPlugin {
-        if (requested.id.id == "io.github.forgestove.modaccessor") {
-            useModule("com.github.ForgeStove.ModAccessor:build:+")
-        }
+        if (requested.id.id != "io.github.forgestove.modaccessor") return
+        useModule("com.github.ForgeStove.ModAccessor:build:${requested.version ?: "+"}")
     }
 }
 ```
@@ -42,7 +39,7 @@ pluginManagement {
 
 ```kotlin
 plugins {
-	id("io.github.forgestove.modaccessor")
+	id("io.github.forgestove.modaccessor") version "+"
 }
 dependencies {
 	accessCompileOnly("com.simibubi.create:create-1.21.1:6.0.4-61:slim")
@@ -54,14 +51,11 @@ dependencies {
 ```kotlin
 pluginManagement {
 	repositories {
-		mavenLocal()
-		gradlePluginPortal()
 		maven("https://jitpack.io")
 	}
 	resolutionStrategy.eachPlugin {
-		if (requested.id.id == "io.github.forgestove.modaccessor") {
-			useModule("com.github.ForgeStove.ModAccessor:build:+")
-		}
+		if(requested.id.id != "io.github.forgestove.modaccessor") return@eachPlugin
+		useModule("com.github.ForgeStove.ModAccessor:build:${requested.version ?: "+"}")
 	}
 }
 ```
