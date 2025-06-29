@@ -68,3 +68,4 @@ pluginManagement {
 * 通常来说，你可以直接向forge/neoforge提供AT文件,它会自动应用到mod类上
 * accessConfiguration是不可传递依赖的，所以你需要手动添加依赖
 * 插件会自动收集 `src/main/resources/META-INF` 目录下的所有 `.cfg` 文件作为默认的 accessTransformerFiles
+* 如果要修改默认值请参照 [vfyjxf/ModAccessor](https://github.com/vfyjxf/ModAccessor)

@@ -68,3 +68,4 @@ pluginManagement {
 * Normally,if you pass AT files to forge/neoforge, it will apply to mod class automatically.
 * The accessConfiguration isn't transitive, so you need to add the dependencies manually.
 * The plugin will automatically collect all `.cfg` files under `src/main/resources/META-INF` as default accessTransformerFiles.
+* If you need to modify the default values, please refer to [vfyjxf/ModAccessor](https://github.com/vfyjxf/ModAccessor)
