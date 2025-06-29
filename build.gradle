@@ -7,7 +7,7 @@ plugins {
 }
 base.archivesName = 'ModAccessor'
 group = 'io.github.forgestove'
-version = '1.0.0'
+version = '1.0.1'
 repositories {
     mavenCentral()
     mavenLocal()
@@ -38,10 +38,10 @@ tasks.withType(Javadoc).configureEach {
 shadowJar {
     archiveClassifier.set('')
     configurations = [project.configurations.shade]
-    relocate 'net.neoforged.jst', 'io.github.forgestove.accessor.relocate.jst'
-    relocate 'net.neoforged.accesstransformers', 'io.github.forgestove.accessor.relocate.accesstransformers'
-    relocate 'org.objectweb.asm', 'io.github.forgestove.accessor.relocate.asm'
-    relocate 'org.apache.commons.lang3', 'io.github.forgestove.accessor.relocate.commons.lang3'
+    relocate 'net.neoforged.jst', 'io.github.forgestove.modaccessor.relocate.jst'
+    relocate 'net.neoforged.accesstransformers', 'io.github.forgestove.modaccessor.relocate.accesstransformers'
+    relocate 'org.objectweb.asm', 'io.github.forgestove.modaccessor.relocate.asm'
+    relocate 'org.apache.commons.lang3', 'io.github.forgestove.modaccessor.relocate.commons.lang3'
 }
 
 gradlePlugin {
@@ -53,7 +53,7 @@ gradlePlugin {
             description = "A simple gradle plugin to solve the problem of accessing private fields and methods during compile time."
             id = 'io.github.forgestove.modaccessor'
             tags.addAll('neoforge', 'forge', 'minecraft', 'java')
-            implementationClass = 'io.github.forgestove.accessor.ModAccessorPlugin'
+            implementationClass = 'io.github.forgestove.modaccessor.ModAccessorPlugin'
         }
     }
 }
