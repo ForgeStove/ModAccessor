@@ -24,6 +24,9 @@ public abstract class AccessTransform implements TransformAction<AccessTransform
 	@Contract(pure = true)
 	@Inject
 	public AccessTransform() {}
+	@InputArtifact
+	@PathSensitive(PathSensitivity.NONE)
+	public abstract Provider<FileSystemLocation> getInputArtifact();
 	@Override
 	public void transform(@NotNull TransformOutputs outputs) {
 		var artifact = getInputArtifact().get().getAsFile();
@@ -47,7 +50,7 @@ public abstract class AccessTransform implements TransformAction<AccessTransform
 							var reader = new ClassReader(entryStream);
 							var classNode = new ClassNode(Opcodes.ASM9);
 							reader.accept(classNode, 0);
-							final var type = Type.getType("L%s;".formatted(classNode.name.replaceAll("\\.", "/")));
+							final var type = Type.getType('L' + classNode.name.replaceAll("\\.", "/") + ';');
 							engine.transform(classNode, type);
 							var classWriter = new ClassWriter(Opcodes.ASM5);
 							classNode.accept(classWriter);
@@ -73,9 +76,6 @@ public abstract class AccessTransform implements TransformAction<AccessTransform
 			throw new RuntimeException(e);
 		}
 	}
-	@InputArtifact
-	@PathSensitive(PathSensitivity.NONE)
-	public abstract Provider<FileSystemLocation> getInputArtifact();
 	public interface Parameters extends TransformParameters {
 		// Define any parameters you need for the transform
 		@InputFiles

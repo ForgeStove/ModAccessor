@@ -7,7 +7,7 @@ plugins {
 }
 base.archivesName = 'ModAccessor'
 group = 'io.github.forgestove'
-version = '1.0.1'
+version = '1.0.2'
 repositories {
     mavenCentral()
     mavenLocal()
@@ -21,8 +21,9 @@ configurations {
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 dependencies {
     compileOnly gradleApi()
-    shade "org.apache.commons:commons-lang3:3.8.1"
-    shade "net.neoforged.jst:jst-cli-bundle:1.0.72"
+    shade 'org.apache.commons:commons-lang3:3.18.0'
+    shade "com.google.code.gson:gson:2.10"
+    shade "org.ow2.asm:asm-util:9.7"
     shade("net.neoforged:accesstransformers:10.0.6") {
         exclude group: 'org.slf4j', module: 'slf4j-api'
     }
