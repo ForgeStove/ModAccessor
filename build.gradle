@@ -7,7 +7,7 @@ plugins {
 }
 base.archivesName = 'ModAccessor'
 group = 'io.github.forgestove'
-version = '1.0.2'
+version = '1.0.1'
 repositories {
     mavenCentral()
     mavenLocal()
