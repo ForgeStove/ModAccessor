@@ -12,6 +12,7 @@ repositories {
 	gradlePluginPortal()
 	maven("https://maven.neoforged.net/releases")
 }
+@Suppress("HasPlatformType")
 val shade by configurations.creating
 configurations.implementation { extendsFrom(shade) }
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
@@ -48,11 +49,10 @@ githubRelease {
 	token(System.getenv("GITHUB_TOKEN"))
 	owner = p("auther")
 	repo = p("name")
-	tagName = "v${p("version")}"
+	tagName = p("version")
 	releaseName = tagName
 	generateReleaseNotes = true
 	prerelease = false
-	releaseAssets(tasks.shadowJar.get().outputs.files)
 	overwrite = true
 }
 fun p(key: String) = property(key).toString()

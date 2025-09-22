@@ -5,6 +5,7 @@ import org.gradle.api.attributes.AttributeContainer;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.ArrayList; // added for snapshot copy
 @SuppressWarnings("unused")
 public class ModAccessorPlugin implements Plugin<@NotNull Project> {
 	@Override
@@ -27,7 +28,9 @@ public class ModAccessorPlugin implements Plugin<@NotNull Project> {
 				getAttribute(parameters.getTo(), true, true);
 			}
 		);
-		for (var config : project.getConfigurations()) extension.createTransformConfiguration(config);
+		// Take a snapshot of current configurations to avoid ConcurrentModificationException
+		var configurationSnapshot = new ArrayList<>(project.getConfigurations());
+		for (var config : configurationSnapshot) extension.createTransformConfiguration(config);
 		project.afterEvaluate(p -> {
 			var atFiles = extension.getAccessTransformerFiles();
 			if (atFiles.isEmpty() || atFiles.getFiles().stream().noneMatch(File::exists))
