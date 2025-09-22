@@ -1,5 +1,6 @@
 package io.github.forgestove.modaccessor;
 import com.google.gson.JsonParser;
+import io.github.forgestove.modaccessor.InterfaceInjectionTransform.Parameters;
 import org.gradle.api.artifacts.transform.*;
 import org.gradle.api.file.*;
 import org.gradle.api.provider.Provider;
@@ -9,24 +10,17 @@ import org.objectweb.asm.*;
 import org.objectweb.asm.signature.*;
 import org.objectweb.asm.util.CheckSignatureAdapter;
 
-import javax.inject.Inject;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.jar.*;
 
 import static java.util.stream.StreamSupport.stream;
-@SuppressWarnings("deprecation")
-public abstract class InterfaceInjectionTransform implements TransformAction<InterfaceInjectionTransform.Parameters> {
-	/**
-	 * {@link  org.gradle.api.internal.file.archive.ZipCopyAction#CONSTANT_TIME_FOR_ZIP_ENTRIES}
-	 */
+public abstract class InterfaceInjectionTransform implements TransformAction<@NotNull Parameters> {
 	private static final long CONSTANT_TIME_FOR_ZIP_ENTRIES = new GregorianCalendar(1980, Calendar.FEBRUARY, 1, 0, 0, 0).getTimeInMillis();
-	@Inject
-	public InterfaceInjectionTransform() {}
 	@InputArtifact
 	@PathSensitive(PathSensitivity.NONE)
-	public abstract Provider<FileSystemLocation> getInputArtifact();
+	public abstract Provider<@NotNull FileSystemLocation> getInputArtifact();
 	@Override
 	public void transform(@NotNull TransformOutputs outputs) {
 		try {
@@ -35,26 +29,21 @@ public abstract class InterfaceInjectionTransform implements TransformAction<Int
 			var parameters = getParameters();
 			var injectionFilePaths = stream(parameters.getInterfaceInjectionFiles().spliterator(), false).map(File::toPath).toList();
 			Map<String, List<String>> injections = new HashMap<>();
-			for (var injectionFilePath : injectionFilePaths) {
+			for (var injectionFilePath : injectionFilePaths)
 				try {
 					var jsonObject = JsonParser.parseReader(Files.newBufferedReader(injectionFilePath)).getAsJsonObject();
 					for (var entry : jsonObject.entrySet()) {
 						List<String> list = new ArrayList<>();
 						if (entry.getValue().isJsonArray()) {
 							var array = entry.getValue().getAsJsonArray();
-							for (var element : array) {
-								list.add(element.getAsString());
-							}
+							for (var element : array) list.add(element.getAsString());
 						}
-						if (entry.getValue().isJsonPrimitive()) {
-							list.add(entry.getValue().getAsString());
-						}
+						if (entry.getValue().isJsonPrimitive()) list.add(entry.getValue().getAsString());
 						injections.put(entry.getKey(), list);
 					}
 				} catch (IOException e) {
 					throw new RuntimeException("Failed to parse injection file: " + injectionFilePath, e);
 				}
-			}
 			var outputFile = outputs.file("injected-" + artifact.getName());
 			if (injections.isEmpty()) {
 				try {
@@ -142,16 +131,11 @@ public abstract class InterfaceInjectionTransform implements TransformAction<Int
 			for (var i = 0; i < innerGenericComponents.length; i++) {
 				var innerComponent = innerGenericComponents[i].trim();
 				// Handle nested generics recursively
-				if (innerComponent.contains("<")) {
-					innerComponent = processNestedGenerics(innerComponent);
-				} else {
-					// Handle simple types
-					innerComponent = "L" + innerComponent + ";";
-				}
+				// Handle simple types
+				if (innerComponent.contains("<")) innerComponent = processNestedGenerics(innerComponent);
+				else innerComponent = "L" + innerComponent + ";";
 				innerProcessedGenerics.append(innerComponent);
-				if (i < innerGenericComponents.length - 1) {
-					innerProcessedGenerics.append(",");
-				}
+				if (i < innerGenericComponents.length - 1) innerProcessedGenerics.append(",");
 			}
 			innerProcessedGenerics.append(">");
 			return innerProcessedGenerics;
@@ -170,18 +154,14 @@ public abstract class InterfaceInjectionTransform implements TransformAction<Int
 			var baseInterfaces = interfaces.clone();
 			Set<String> modifiedInterfaces = new LinkedHashSet<>(interfaces.length + interfaceInjections.size());
 			Collections.addAll(modifiedInterfaces, interfaces);
-			for (var interfaceInjection : interfaceInjections) {
-				modifiedInterfaces.add(interfaceInjection.toImpl());
-			}
+			for (var interfaceInjection : interfaceInjections) modifiedInterfaces.add(interfaceInjection.toImpl());
 			// See JVMS: https://docs.oracle.com/javase/specs/jvms/se17/html/jvms-4.html#jvms-ClassSignature
 			if (interfaceInjections.stream().anyMatch(injection -> injection.generics != null) && signature == null) {
 				// Classes that are not using generics don't need signatures, so their signatures are null
 				// If the class is not using generics but that an injected interface targeting the class is using them, we are creating
 				// the class signature
 				var baseSignatureBuilder = new StringBuilder("L" + superName + ";");
-				for (var baseInterface : baseInterfaces) {
-					baseSignatureBuilder.append("L").append(baseInterface).append(";");
-				}
+				for (var baseInterface : baseInterfaces) baseSignatureBuilder.append("L").append(baseInterface).append(";");
 				signature = baseSignatureBuilder.toString();
 			}
 			if (signature != null) {
@@ -193,14 +173,10 @@ public abstract class InterfaceInjectionTransform implements TransformAction<Int
 				var resultingSignature = new StringBuilder(signature);
 				for (var interfaceInjection : interfaceInjections) {
 					String superinterfaceSignature;
-					if (interfaceInjection.generics() != null) {
+					if (interfaceInjection.generics() != null)
 						superinterfaceSignature = "L" + interfaceInjection.toImpl() + interfaceInjection.generics() + ";";
-					} else {
-						superinterfaceSignature = "L" + interfaceInjection.toImpl() + ";";
-					}
-					if (resultingSignature.indexOf(superinterfaceSignature) == -1) {
-						resultingSignature.append(superinterfaceSignature);
-					}
+					else superinterfaceSignature = "L" + interfaceInjection.toImpl() + ";";
+					if (resultingSignature.indexOf(superinterfaceSignature) == -1) resultingSignature.append(superinterfaceSignature);
 				}
 				signature = resultingSignature.toString();
 			}
@@ -217,18 +193,14 @@ public abstract class InterfaceInjectionTransform implements TransformAction<Int
 			// this may produce technically incorrect bytecode cuz we don't know the actual access flags for inner class entries,
 			// but it's hopefully enough to quiet some IDE errors
 			for (final var itf : interfaceInjections) {
-				if (this.knownInnerClasses.contains(itf.toImpl())) {
-					continue;
-				}
+				if (this.knownInnerClasses.contains(itf.toImpl())) continue;
 				var simpleNameIdx = itf.toImpl().lastIndexOf('/');
 				final var simpleName = simpleNameIdx == -1 ? itf.toImpl() : itf.toImpl().substring(simpleNameIdx + 1);
 				var lastIdx = -1;
 				var dollarIdx = -1;
 				// Iterate through inner class entries starting from outermost to innermost
 				while ((dollarIdx = simpleName.indexOf('$', dollarIdx + 1)) != -1) {
-					if (dollarIdx - lastIdx == 1) {
-						continue;
-					}
+					if (dollarIdx - lastIdx == 1) continue;
 					// Emit the inner class entry from this to the last one
 					if (lastIdx != -1) {
 						final var outerName = itf.toImpl().substring(0, simpleNameIdx + 1 + lastIdx);
@@ -262,13 +234,12 @@ public abstract class InterfaceInjectionTransform implements TransformAction<Int
 		}
 		// Ensures that injected interfaces only use collected type parameters from the target class
 		public void check() {
-			for (var interfaceInjection : this.interfaceInjections) {
+			for (var interfaceInjection : this.interfaceInjections)
 				if (interfaceInjection.generics() != null) {
 					var reader = new SignatureReader("Ljava/lang/Object" + interfaceInjection.generics() + ";");
 					var confirm = new GenericsConfirm(api, interfaceInjection.target(), interfaceInjection.toImpl(), this.typeParameters);
 					reader.accept(confirm);
 				}
-			}
 		}
 	}
 	private static class GenericsConfirm extends SignatureVisitor {
@@ -283,15 +254,13 @@ public abstract class InterfaceInjectionTransform implements TransformAction<Int
 		}
 		@Override
 		public void visitTypeVariable(String name) {
-			if (!this.acceptedTypeVariables.contains(name)) {
-				throw new IllegalStateException("Interface "
-					+ this.interfaceName
-					+ " attempted to use a type variable named "
-					+ name
-					+ " which is not present in the "
-					+ this.className
-					+ " class");
-			}
+			if (!this.acceptedTypeVariables.contains(name)) throw new IllegalStateException("Interface "
+				+ this.interfaceName
+				+ " attempted to use a type variable named "
+				+ name
+				+ " which is not present in the "
+				+ this.className
+				+ " class");
 			super.visitTypeVariable(name);
 		}
 	}

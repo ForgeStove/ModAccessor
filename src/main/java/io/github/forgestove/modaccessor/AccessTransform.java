@@ -1,32 +1,25 @@
 package io.github.forgestove.modaccessor;
+import io.github.forgestove.modaccessor.AccessTransform.Parameters;
 import net.neoforged.accesstransformer.api.AccessTransformerEngine;
 import org.gradle.api.artifacts.transform.*;
 import org.gradle.api.file.*;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.*;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.*;
 import org.objectweb.asm.tree.ClassNode;
 
-import javax.inject.Inject;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.jar.*;
 
 import static java.util.stream.StreamSupport.stream;
-@SuppressWarnings("deprecation")
-public abstract class AccessTransform implements TransformAction<AccessTransform.Parameters> {
-	/**
-	 * {@link  org.gradle.api.internal.file.archive.ZipCopyAction#CONSTANT_TIME_FOR_ZIP_ENTRIES}
-	 */
+public abstract class AccessTransform implements TransformAction<@NotNull Parameters> {
 	private static final long CONSTANT_TIME_FOR_ZIP_ENTRIES = new GregorianCalendar(1980, Calendar.FEBRUARY, 1, 0, 0, 0).getTimeInMillis();
-	@Contract(pure = true)
-	@Inject
-	public AccessTransform() {}
 	@InputArtifact
 	@PathSensitive(PathSensitivity.NONE)
-	public abstract Provider<FileSystemLocation> getInputArtifact();
+	public abstract Provider<@NotNull FileSystemLocation> getInputArtifact();
 	@Override
 	public void transform(@NotNull TransformOutputs outputs) {
 		var artifact = getInputArtifact().get().getAsFile();
@@ -34,13 +27,12 @@ public abstract class AccessTransform implements TransformAction<AccessTransform
 		var parameters = getParameters();
 		var atFiles = stream(parameters.getAccessTransformerFiles().spliterator(), false).map(File::toPath).toList();
 		var engine = AccessTransformerEngine.newEngine();
-		for (var atFile : atFiles) {
+		for (var atFile : atFiles)
 			try {
 				engine.loadATFromPath(atFile);
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
-		}
 		var outputFile = outputs.file(artifact.getName());
 		try (var inputJar = new JarFile(artifact)) {
 			try (var outputJarStream = new JarOutputStream(Files.newOutputStream(outputFile.toPath()))) {
