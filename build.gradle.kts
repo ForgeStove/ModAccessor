@@ -3,9 +3,9 @@ plugins {
 	id("com.gradleup.shadow") version "8.3.6"
 	id("com.github.breadmoirai.github-release") version "+"
 }
-base.archivesName.set(p("name"))
-group = p("group")
-version = p("version")
+base.archivesName.set(p("pluginName"))
+group = p("pluginGroup")
+version = p("pluginVersion")
 repositories {
 	mavenCentral()
 	mavenLocal()
@@ -36,8 +36,8 @@ gradlePlugin {
 	website.set("https://github.com/ForgeStove/ModAccessor")
 	vcsUrl.set("https://github.com/ForgeStove/ModAccessor")
 	plugins {
-		create(p("id")).apply {
-			displayName = p("name")
+		create(p("pluginId")).apply {
+			displayName = p("pluginName")
 			description = "A simple gradle plugin to solve the problem of accessing private fields and methods during compile time."
 			id = "io.github.forgestove.modaccessor"
 			tags.set(listOf("neoforge", "forge", "minecraft", "java"))
@@ -47,9 +47,9 @@ gradlePlugin {
 }
 githubRelease {
 	token(System.getenv("GITHUB_TOKEN"))
-	owner = p("auther")
-	repo = p("name")
-	tagName = p("version")
+	owner = p("pluginAuther")
+	repo = p("pluginName")
+	tagName = p("pluginVersion")
 	releaseName = tagName
 	generateReleaseNotes = true
 	prerelease = false
